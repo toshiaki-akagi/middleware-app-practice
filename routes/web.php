@@ -17,5 +17,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-// 管理者ページ（ミドルウェア未適用 - 受講生が実装する）
-Route::get('/admin', [AdminController::class, 'index']);
+// 管理者ページ（adminミドルウェア適用により管理者のみアクセス可能）
+Route::get('/admin', [AdminController::class, 'index'])->middleware('admin');

@@ -1,67 +1,46 @@
-# Laravel Middleware Starter
+# middleware-app-practice
 
-ミドルウェアハンズオン（10-2-4）用のスターターキットです。
+## 概要
+COACHTECH 教材 Tutorial 10-2「ミドルウェア ハンズオン演習」で作成した成果物です。
+スターターキットをcloneし、管理者のみ管理者ページに遷移できるように制限するためのミドルウェアを追加で実装しました。
 
-## 含まれているもの
+## 使用技術
+- PHP 8.5.12
+- Laravel 10.50.0
+- カスタムミドルウェア
+- Laravel Fortify（認証）
 
-- Laravel 10.x + Sail
-- Fortify認証（ログイン / 登録 / ログアウト）
-- Userモデル（is_adminカラム付き）
-- テストユーザー（シーダー）
-  - 管理者: admin@example.com / password
-  - 一般: user@example.com / password
-- AdminController
-- 管理者ページ（/admin）
-
-## セットアップ
-
-```bash
-# クローン
-git clone https://github.com/coachtech-material/laravel-middleware-starter.git middleware-app-sample
-cd laravel-middleware-starter
-
-# 依存関係インストール
-docker run --rm \
-  -u "$(id -u):$(id -g)" \
-  -v "$(pwd):/var/www/html" \
-  -w /var/www/html \
-  -e COMPOSER_CACHE_DIR=/tmp/composer_cache \
-  laravelsail/php82-composer:latest \
-  composer install
-
-# 環境ファイル作成
-cp .env.example .env
-
-# Sail起動
-./vendor/bin/sail up -d
-
-# アプリケーションキー生成
-./vendor/bin/sail artisan key:generate
-
-# マイグレーション・シーダー実行
-./vendor/bin/sail artisan migrate --seed
-```
+## 学んだこと
+- ミドルウェアを活用してHTTPリクエストがコントローラに届くまで、またHTTPレスポンスがブラウザに届く前に処理をはさむ方法
+- カスタムミドルウェアを作成して app\Http\kernel.php に登録する方法
+- ルートでミドルウェアを使用してアクセス制限などを適用する方法
 
 ## 動作確認
+1. スターターキットをcloneする
+2. middleware-app-practiceディレクトリ上でsail up -dコマンドによりyamlファイルに記述した構成通りのコンテナを起動させてネットワークで連携
+3. sail artisan migrate --seedコマンドによりテーブルを作成して初期値を代入
+4. ブラウザで「`http://localhost`」のURLにアクセスして以下のそれぞれの項目を確認
+   - admin@example.com, password でログインし、「管理者ページにアクセス」押下で遷移可能
+   - user@example.com, password でログイン、「管理者ページにアクセス」押下で403エラー表示
+5. 必要に応じて「ログアウト」押下でログアウトを行う
 
-1. http://localhost にアクセス
-2. admin@example.com / password でログイン
-3. 「管理者ページにアクセス」をクリック → 表示される
-4. ログアウトして user@example.com / password でログイン
-5. 「管理者ページにアクセス」をクリック → 表示される（ミドルウェア未実装のため）
+## 開発の工夫
+- スターターキットを活用することで、今回確認したいカスタムミドルウェアの部分にフォーカスをあてて実装を進めた
+- 管理者権限がなく管理者ページにアクセスできなかった場合に、適切にエラーが表示されるように実装した
 
-## 演習課題
+## 動作確認のスクリーンショット
+1. 管理者でログインした画面
 
-カスタムミドルウェアを作成して、管理者のみが /admin にアクセスできるようにしてください。
+   ![管理者でログインした画面](CheckImage_middleware_admin.png)
 
-## 実装タスク
+2. 管理者で管理者ページに遷移した画面
 
-1. CheckAdminミドルウェアを作成
-2. handleメソッドに管理者チェックロジックを実装
-3. Kernel.phpにミドルウェアを登録
-4. /adminルートにミドルウェアを適用
+   ![管理者で管理者ページに遷移した画面](CheckImage_middleware_adminOnly.png)
 
-## 完成後の動作
+3. 一般ユーザーでログインした画面
 
-- admin@example.com でログイン → /admin アクセス → ✅ 表示される
-- user@example.com でログイン → /admin アクセス → ❌ 403エラー
+   ![一般ユーザーでログインした画面](CheckImage_middleware_user.png)
+
+4. 一般ユーザーで管理者ページに遷移しようとした画面
+
+   ![一般ユーザーで管理者ページに遷移しようとした画面](CheckImage_middleware_userError.png)
